@@ -88,6 +88,71 @@
     return isoDe(new Date());
   }
   const toutOuvert = () => modeTest && !params.get('date');
+
+  /* ───────── Direction artistique du jour ───────── */
+
+  // Trois ambiances de Noël ; chaque jour en tire une au sort, avec un ornement de cases et un décor.
+  // Le tirage dépend seulement de la date : il reste le même toute la journée, sur tous les appareils.
+  // En mode test, ?da=foret&orn=houx&decor=sapins force un choix.
+  const DA = { nuit: '#2a1d47', foret: '#0f2a22', velours: '#2b0f17' };
+  const ORNEMENTS = ['ruban', 'neige', 'houx'];
+  const DECORS = ['etoile', 'guirlande', 'sapins'];
+
+  function tirage(graine, liste) {
+    let x = 2166136261;
+    for (const c of graine) x = Math.imul(x ^ c.charCodeAt(0), 16777619);
+    return liste[(x >>> 0) % liste.length];
+  }
+  function choix(cle, liste, graine) {
+    const force = modeTest && params.get(cle);
+    return liste.includes(force) ? force : tirage(graine, liste);
+  }
+
+  function appliquerDA() {
+    const jour = aujourdhui();
+    const racine = document.documentElement;
+    const da = choix('da', Object.keys(DA), jour + ':da');
+    racine.dataset.da = da;
+    racine.dataset.orn = choix('orn', ORNEMENTS, jour + ':orn');
+    racine.dataset.decor = choix('decor', DECORS, jour + ':decor');
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.content = DA[da];
+
+    document.querySelectorAll('.decor, .poussiere').forEach((el) => el.remove());
+    const decor = racine.dataset.decor;
+    if (decor === 'etoile') {
+      document.querySelector('.entete').prepend(h('div', { class: 'decor decor-etoile', 'aria-hidden': 'true' }, h('span')));
+    } else if (decor === 'guirlande') {
+      const couleurs = ['var(--rouge)', 'var(--or)', '#fff', 'var(--or)'];
+      let ampoules = '';
+      for (let i = 0; i < 14; i++) {
+        const x = 4 + i * 7.1, y = 18 + 10 * Math.sin((x / 100) * Math.PI * 2 - 0.4);
+        ampoules += `<ellipse class="ampoule" cx="${x}" cy="${y + 3}" rx="1.5" ry="4.5" fill="${couleurs[i % 4]}" style="animation-delay:${-(i % 4) * 0.45}s"/>`;
+      }
+      const el = h('div', { class: 'decor decor-guirlande', 'aria-hidden': 'true' });
+      el.innerHTML = `<svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M-2 16 Q25 38 50 18 T102 18" fill="none" stroke="var(--houx)" stroke-width=".8" vector-effect="non-scaling-stroke"/>${ampoules}</svg>`;
+      document.querySelector('.entete').prepend(el);
+    } else if (decor === 'sapins') {
+      const el = h('div', { class: 'decor decor-sapins', 'aria-hidden': 'true' });
+      const sapin = (x, w, hauteur) => `<path d="M${x} ${70 - hauteur}L${x + w * .55} ${70 - hauteur * .55}H${x + w * .3}L${x + w * .8} ${70 - hauteur * .2}H${x + w * .45}L${x + w} 70H${x - w}L${x - w * .45} ${70 - hauteur * .2}H${x - w * .8}L${x - w * .3} ${70 - hauteur * .55}H${x - w * .55}Z"/>`;
+      el.innerHTML = `<svg viewBox="0 0 400 70" preserveAspectRatio="xMidYMax slice" fill="currentColor">${
+        [[14, 16, 46], [44, 12, 34], [76, 18, 56], [120, 11, 30], [290, 12, 34], [322, 18, 58], [356, 14, 42], [386, 16, 50]]
+          .map(([x, w, ht]) => sapin(x, w, ht)).join('')}</svg>`;
+      document.body.append(el);
+    }
+
+    // Poussière d'étoiles, présente dans les trois ambiances.
+    const poussiere = h('div', { class: 'poussiere', 'aria-hidden': 'true' });
+    for (let i = 0; i < 16; i++) {
+      const t = 5 + tirage(jour + ':t' + i, [0, 2, 4, 6, 8]);
+      poussiere.append(h('span', {
+        class: 'etincelle',
+        style: `left:${tirage(jour + ':x' + i, [...Array(97).keys()])}%;top:${tirage(jour + ':y' + i, [...Array(97).keys()])}%;width:${t}px;height:${t}px;animation-delay:${-i * 0.37}s`
+      }));
+    }
+    document.body.prepend(poussiere);
+  }
+  appliquerDA();
   const estDispo = (iso) => toutOuvert() || iso <= aujourdhui();
 
   /* ───────── Grille ───────── */
@@ -108,7 +173,7 @@
           class: classes.join(' '),
           'aria-label': majuscule(dateLisible(iso, true)) + (dispo ? '' : ', pas encore ouverte'),
           onclick: (e) => clicCase(iso, e.currentTarget)
-        }, String(Number(iso.slice(8)))));
+        }, h('span', { class: 'num', text: String(Number(iso.slice(8))) })));
       }
       racine.append(h('section', { class: 'mois' }, h('h2', { text: nom }), grille));
     }
