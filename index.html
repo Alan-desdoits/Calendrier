@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#f6efe4">
+  <title>Jusqu'à Noël</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="verrouille">
+  <div id="barre-test" class="barre-test" hidden>
+    <span id="barre-test-texte">Mode test : toutes les cases sont ouvertes.</span>
+    <button type="button" id="quitter-test">Quitter</button>
+  </div>
+
+  <header class="entete">
+    <h1 id="titre">Jusqu'à Noël</h1>
+    <p>Une case par jour jusqu'au 24 décembre. Si tu en rates une, pas grave : elle t'attend.</p>
+  </header>
+
+  <main id="grille" class="grille"></main>
+
+  <div id="fenetre" class="fenetre" hidden>
+    <div class="voile" data-fermer></div>
+    <div class="feuille" role="dialog" aria-modal="true" aria-labelledby="fenetre-titre">
+      <div class="feuille-haut">
+        <p class="feuille-date" id="fenetre-titre"></p>
+        <button type="button" class="fermer" data-fermer>Fermer</button>
+      </div>
+      <div class="feuille-contenu" id="fenetre-contenu"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <noscript><p class="entete">Active JavaScript pour ouvrir le calendrier.</p></noscript>
+
+  <script>window.STYLE_ANIM = 'flocons';</script>
+  <script src="contenu.js" charset="utf-8"></script>
+  <script src="app.js" charset="utf-8"></script>
+</body>
+</html>
