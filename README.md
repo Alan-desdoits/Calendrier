@@ -7,3 +7,5 @@ Calendrier de l'avent interactif, du 1er novembre au 24 décembre 2026.
 - `photo/` : les photos des cases.
 
 Pour tester sur l'ordinateur : double-cliquer sur `index.html`.
+
+Après une modification, augmente le numéro `?v=` des trois fichiers dans `index.html` pour que les navigateurs rechargent la nouvelle version.
