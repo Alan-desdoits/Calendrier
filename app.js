@@ -269,11 +269,45 @@
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') fermerFenetre(false); });
   window.addEventListener('popstate', () => fermerFenetre(true));
 
+  // Champ facultatif « suite » d'une case : un lien « Suivant » sous le contenu fait arriver
+  // une enveloppe scellée ; en la touchant, elle s'ouvre et la lettre sort avec le message.
+  function avecSuite(jour, contenu) {
+    if (!jour.suite) return contenu;
+    const texte = h('p', { class: aCompleter(jour.suite) ? 'a-completer' : null, text: jour.suite });
+    const enveloppe = h('button', { type: 'button', class: 'enveloppe', 'aria-label': 'Ouvrir la lettre' },
+      h('span', { class: 'env-fond' }),
+      h('span', { class: 'env-lettre' }, coeurSvg('env-coeur'), texte),
+      h('span', { class: 'env-poche' }),
+      h('span', { class: 'env-rabat' }),
+      h('span', { class: 'env-sceau' }, coeurSvg()));
+    const aide = h('p', { class: 'env-aide', text: 'Touche pour ouvrir' });
+    const zone = h('div', { class: 'env-zone' }, enveloppe, aide);
+    zone.hidden = true;
+    enveloppe.addEventListener('click', () => {
+      if (enveloppe.classList.contains('ouverte')) return;
+      enveloppe.classList.add('ouverte');
+      zone.classList.add('ouverte');
+      enveloppe.setAttribute('aria-label', 'Lettre ouverte');
+      aide.remove();
+      if (!MOINS_ANIM) {
+        setTimeout(() => {
+          const r = enveloppe.getBoundingClientRect();
+          gerbe(ETOILE, r.left + r.width / 2, r.top, 14, ORS, 70);
+        }, 900);
+      }
+    });
+    const lien = h('button', {
+      type: 'button', class: 'lien-suivant',
+      onclick: () => { lien.remove(); zone.hidden = false; }
+    }, jour.boutonSuite || 'Suivant →');
+    return h('div', null, contenu, lien, zone);
+  }
+
   function ouvrirCase(iso) {
     const jour = C.jours[iso];
     const rendu = RENDUS[jour.type];
     const origine = pointOrigine;
-    montrerFenetre(majuscule(dateLisible(iso, true)), rendu(jour, iso));
+    montrerFenetre(majuscule(dateLisible(iso, true)), avecSuite(jour, rendu(jour, iso)));
     if (!modeTest) {
       ouvertes.add(iso);
       stock.ecrire('avent-ouvertes', JSON.stringify([...ouvertes]));

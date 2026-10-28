@@ -15,7 +15,7 @@ window.CONTENU = {
 
     /* ───────────── NOVEMBRE ───────────── */
 
-    "2026-11-01": { type: "texte", texte: "C'est parti pour un voyage jusqu'à Noël ! Rendez-vous ici tous les jours." },
+    "2026-11-01": { type: "texte", texte: "C'est parti pour un voyage jusqu'à Noël ! Rendez-vous ici tous les jours.", suite: "Mon amour, je t'aime très fort, j'espère que ce calendrier va te plaire" },
 
     "2026-11-02": { type: "question", texte: "Quelle est ta plus belle photo de l'année sur ton téléphone ?" },
 
