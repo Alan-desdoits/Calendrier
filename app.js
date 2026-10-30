@@ -202,8 +202,7 @@
   function afficherBons() {
     const liste = h('div', { class: 'tickets' });
     for (const iso of bonsOuverts()) liste.append(ticketBon(C.jours[iso], iso));
-    montrerFenetre('Mes bons', h('div', null,
-      liste, h('p', { class: 'bon-mention tickets-mention', text: 'À utiliser quand on se retrouve.' })));
+    montrerFenetre('Mes bons', liste);
   }
   $('#bouton-bons').addEventListener('click', afficherBons);
 
