@@ -859,8 +859,7 @@
       indice: j.indice,
       revele: () => h('div', { class: 'revele' },
         h('img', { class: 'spa-photo', src: j.src, alt: 'Un spa' }),
-        h('p', { class: 'spa-texte', text: j.texte }),
-        h('p', { class: 'bon-mention', text: 'À utiliser quand on se retrouve.' }))
+        h('p', { class: 'spa-texte', text: j.texte }))
     });
   }
 
