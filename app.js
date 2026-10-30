@@ -201,19 +201,23 @@
 
   function afficherBons() {
     const liste = h('div', { class: 'tickets' });
-    for (const iso of bonsOuverts()) {
-      liste.append(h('div', { class: 'ticket-bon' },
-        h('div', { class: 'ticket-bon-talon' },
-          h('span', { class: 'ticket-bon-jour', text: String(Number(iso.slice(8))) }),
-          h('span', { class: 'ticket-bon-mois', text: iso.slice(5, 7) === '11' ? 'nov.' : 'déc.' })),
-        h('div', { class: 'ticket-bon-corps' },
-          h('p', { class: 'ticket-bon-kicker', text: 'Bon pour' }),
-          h('p', { class: 'ticket-bon-titre', text: C.jours[iso].titre }))));
-    }
+    for (const iso of bonsOuverts()) liste.append(ticketBon(C.jours[iso], iso));
     montrerFenetre('Mes bons', h('div', null,
       liste, h('p', { class: 'bon-mention tickets-mention', text: 'À utiliser quand on se retrouve.' })));
   }
   $('#bouton-bons').addEventListener('click', afficherBons);
+
+  // Ticket à talon : la date sur le talon à gauche, le bon à droite.
+  // Même dessin dans la case et dans « Mes bons », en plus grand dans la case.
+  function ticketBon(j, iso, grand) {
+    return h('div', { class: 'ticket-bon' + (grand ? ' grand' : '') },
+      h('div', { class: 'ticket-bon-talon' },
+        h('span', { class: 'ticket-bon-jour', text: String(Number(iso.slice(8))) }),
+        h('span', { class: 'ticket-bon-mois', text: iso.slice(5, 7) === '11' ? (grand ? 'novembre' : 'nov.') : (grand ? 'décembre' : 'déc.') })),
+      h('div', { class: 'ticket-bon-corps' },
+        h('p', { class: 'ticket-bon-kicker', text: 'Bon pour' }),
+        h('p', { class: 'ticket-bon-titre', text: j.titre })));
+  }
 
   // Centre de la case touchée, pour faire partir l'animation « paillettes » de là.
   let pointOrigine = null;
@@ -464,11 +468,10 @@
       h('figcaption', { class: aCompleter(j.legende) ? 'a-completer' : null, text: j.legende }));
   }
 
-  function rendreBon(j) {
-    return h('div', { class: 'bon' },
-      h('p', { class: 'bon-kicker', text: 'Bon pour' }),
-      h('p', { class: 'bon-titre', text: j.titre }),
-      h('p', { class: 'bon-mention', text: 'À utiliser quand on se retrouve.' }));
+  function rendreBon(j, iso) {
+    return h('div', { class: 'bon-case' },
+      ticketBon(j, iso, true),
+      h('p', { class: 'bon-mention tickets-mention', text: 'À utiliser quand on se retrouve.' }));
   }
 
   function rendrePochette(j) {
