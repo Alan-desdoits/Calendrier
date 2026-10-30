@@ -184,7 +184,36 @@
       : toutOuvert()
         ? 'Mode test : toutes les cases sont ouvertes.'
         : 'Mode test : date simulée au ' + dateLisible(aujourdhui(), false) + '.';
+    majBoutonBons();
   }
+
+  /* ───────── Bouton « Mes bons » ───────── */
+
+  // Les bons déjà ouverts se retrouvent d'un geste : un bouton rond doré en bas à droite
+  // ouvre la liste en tickets, sans rouvrir chaque case. Il n'apparaît qu'à partir du premier bon.
+  function bonsOuverts() {
+    return JOURS.filter((iso) => C.jours[iso].type === 'bon' && estDispo(iso) && (modeTest || ouvertes.has(iso)));
+  }
+
+  function majBoutonBons() {
+    $('#bouton-bons').hidden = bonsOuverts().length === 0;
+  }
+
+  function afficherBons() {
+    const liste = h('div', { class: 'tickets' });
+    for (const iso of bonsOuverts()) {
+      liste.append(h('div', { class: 'ticket-bon' },
+        h('div', { class: 'ticket-bon-talon' },
+          h('span', { class: 'ticket-bon-jour', text: String(Number(iso.slice(8))) }),
+          h('span', { class: 'ticket-bon-mois', text: iso.slice(5, 7) === '11' ? 'nov.' : 'déc.' })),
+        h('div', { class: 'ticket-bon-corps' },
+          h('p', { class: 'ticket-bon-kicker', text: 'Bon pour' }),
+          h('p', { class: 'ticket-bon-titre', text: C.jours[iso].titre }))));
+    }
+    montrerFenetre('Mes bons', h('div', null,
+      liste, h('p', { class: 'bon-mention tickets-mention', text: 'À utiliser quand on se retrouve.' })));
+  }
+  $('#bouton-bons').addEventListener('click', afficherBons);
 
   // Centre de la case touchée, pour faire partir l'animation « paillettes » de là.
   let pointOrigine = null;
