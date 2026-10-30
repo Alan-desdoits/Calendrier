@@ -474,10 +474,18 @@
       h('p', { class: 'bon-mention tickets-mention', text: 'À utiliser quand on se retrouve.' }));
   }
 
+  // Enveloppe crème vue de face, son numéro écrit dessus, fermée d'un cachet cœur ;
+  // l'indice est dans une petite carte en dessous.
   function rendrePochette(j) {
-    return h('div', null,
-      h('p', { class: 'pochette-num', text: 'Ouvre la pochette n°' + j.numero }),
-      h('p', { class: 'indice', text: j.indice }));
+    return h('div', { class: 'pochette' },
+      h('p', { class: 'pochette-appel', text: 'Ouvre la pochette' }),
+      h('div', { class: 'pochette-env', role: 'img', 'aria-label': 'Pochette n°' + j.numero },
+        h('span', { class: 'pochette-rabat' }),
+        h('span', { class: 'pochette-sceau' }, coeurSvg()),
+        h('span', { class: 'pochette-num', text: 'n° ' + j.numero })),
+      j.indice && h('div', { class: 'pochette-indice' },
+        h('p', { class: 'pochette-indice-titre', text: 'Indice' }),
+        h('p', { text: j.indice })));
   }
 
   function rendreRecette(j) {

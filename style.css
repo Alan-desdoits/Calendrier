@@ -226,7 +226,35 @@ img { max-width: 100%; display: block; }
 @media (prefers-reduced-motion: reduce) { .ticket-bon.grand { animation: none; } }
 
 /* ── Pochette ── */
-.pochette-num { font-family: var(--titre); font-size: 1.7rem; margin: 12px 0 8px; color: var(--rouge-texte); }
+.pochette { padding-top: 6px; }
+.pochette-appel { margin: 0 0 14px; text-align: center; text-transform: uppercase; letter-spacing: .18em; font-size: .8rem; font-weight: 700; color: var(--doux); }
+.pochette-env {
+  position: relative; width: min(100%, 290px); aspect-ratio: 3 / 2; margin: 0 auto; overflow: hidden;
+  border-radius: 8px; background: #fbf3e4; box-shadow: 0 12px 26px rgba(0, 0, 0, .35);
+  animation: glisse .6s cubic-bezier(.2, .8, .3, 1);
+}
+/* plis du bas de l'enveloppe */
+.pochette-env::before, .pochette-env::after {
+  content: ""; position: absolute; bottom: 0; width: 60%; height: 1px; background: #e2d2b2; transform-origin: bottom;
+}
+.pochette-env::before { left: 0; transform: rotate(-36deg); transform-origin: left bottom; }
+.pochette-env::after { right: 0; transform: rotate(36deg); transform-origin: right bottom; }
+.pochette-rabat { position: absolute; inset: 0 0 auto; height: 46%; background: #efe2c9; clip-path: polygon(0 0, 100% 0, 100% 10%, 50% 100%, 0 10%); }
+.pochette-sceau {
+  position: absolute; left: 50%; top: 46%; width: 40px; height: 40px; margin: -20px 0 0 -20px;
+  display: grid; place-items: center; border-radius: 50%; background: var(--rouge); box-shadow: 0 2px 6px rgba(0, 0, 0, .3);
+}
+.pochette-sceau svg { width: 19px; height: 17px; fill: #fff; }
+.pochette-num {
+  position: absolute; left: 0; right: 0; bottom: 8%; text-align: center;
+  font-family: var(--script); font-size: 2.6rem; line-height: 1; color: #b3283a;
+}
+.pochette-indice {
+  margin: 22px 0 6px; padding: 14px 16px; border-radius: 14px;
+  background: var(--champ); border: 1px solid color-mix(in srgb, var(--or) 40%, transparent);
+}
+.pochette-indice p { margin: 0; color: var(--encre); font-size: 1.05rem; }
+.pochette-indice .pochette-indice-titre { margin-bottom: 6px; text-transform: uppercase; letter-spacing: .16em; font-size: .72rem; font-weight: 800; color: var(--or); }
 .indice { font-style: italic; color: var(--doux); font-size: 1.1rem; margin: 8px 0 16px; }
 
 /* ── Recette ── */
