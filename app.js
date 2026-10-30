@@ -154,6 +154,8 @@
   }
   appliquerDA();
   const estDispo = (iso) => toutOuvert() || iso <= aujourdhui();
+  // Les jours passés comptent comme déjà ouverts ; seul le jour même attend d'être ouvert.
+  const dejaOuverte = (iso) => ouvertes.has(iso) || (!toutOuvert() && iso < aujourdhui());
 
   /* ───────── Grille ───────── */
 
@@ -166,7 +168,7 @@
       for (const iso of JOURS.filter((j) => j.slice(5, 7) === num)) {
         const dispo = estDispo(iso);
         const classes = ['case', dispo ? 'dispo' : 'fermee'];
-        if (dispo && ouvertes.has(iso)) classes.push('ouverte');
+        if (dispo && dejaOuverte(iso)) classes.push('ouverte');
         if (iso === auj) classes.push('aujourdhui');
         grille.append(h('button', {
           type: 'button',
@@ -192,7 +194,7 @@
   // Les bons déjà ouverts se retrouvent d'un geste : un bouton rond doré en bas à droite
   // ouvre la liste en tickets, sans rouvrir chaque case. Il n'apparaît qu'à partir du premier bon.
   function bonsOuverts() {
-    return JOURS.filter((iso) => C.jours[iso].type === 'bon' && estDispo(iso) && (modeTest || ouvertes.has(iso)));
+    return JOURS.filter((iso) => C.jours[iso].type === 'bon' && estDispo(iso) && (modeTest || dejaOuverte(iso)));
   }
 
   function majBoutonBons() {
